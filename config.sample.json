@@ -1,0 +1,290 @@
+{
+  "variables": {
+    "proj_l_host": "192.168.1.1:4352",
+    "proj_r_host": "192.168.1.2:4352",
+    "tv_l_port": 1,
+    "tv_r_port": 2,
+    "auxtv_l_port": 3,
+    "auxtv_r_port": 4
+  },
+  "start_page": "main",
+  "pages": {
+    "main": {
+      "name": "Main",
+      "groups": {
+        "tvs": {
+          "name": "TVs",
+          "scripts": {
+            "on": {
+              "name": "On",
+              "glyph": "off",
+              "btn": "success",
+              "commands": [
+                "irsend set_transmitters 1 2 3 4",
+                "irsend send_once sony power_on",
+                "irsend send_once vizio power_on",
+                "irsend send_once vizio hdmi1"
+              ]
+            },
+            "off": {
+              "name": "Off",
+              "glyph": "off",
+              "btn": "danger",
+              "commands": [
+                "irsend set_transmitters 1 2 3 4",
+                "irsend send_once sony power_off",
+                "irsend send_once vizio power_off"
+              ]
+            }
+          }
+        },
+        "projs": {
+          "name": "Projectors",
+          "scripts": {
+            "on": {
+              "name": "On",
+              "glyph": "off",
+              "btn": "success",
+              "commands": [
+                "&pjlink -p {{=it.proj_l_host}} power on",
+                "&pjlink -p {{=it.proj_r_host}} power on",
+                "irsend set_transmitters {{=it.tv_l_port}} {{=it.tv_r_port}}",
+                "irsend send_once sony power_off",
+                "irsend set_transmitters {{=it.auxtv_l_port}} {{=it.auxtv_r_port}}",
+                "irsend send_once vizio power_on",
+                "irsend send_once vizio hdmi1"
+              ]
+            },
+            "off": {
+              "name": "Off",
+              "glyph": "off",
+              "btn": "danger",
+              "commands": [
+                "&pjlink -p {{=it.proj_l_host}} power off",
+                "&pjlink -p {{=it.proj_r_host}} power off",
+                "irsend set_transmitters 1 2 3 4",
+                "irsend send_once vizio power_off",
+                "irsend send_once sony power_off"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "all": {
+      "name": "All",
+      "groups": {
+        "tv_l": {
+          "name": "TV Left",
+          "scripts": {
+            "on": {
+              "name": "On",
+              "glyph": "off",
+              "btn": "success",
+              "commands": [
+                "irsend set_transmitters {{=it.tv_l_port}}",
+                "irsend send_once sony power_on"
+              ]
+            },
+            "off": {
+              "name": "Off",
+              "glyph": "off",
+              "btn": "danger",
+              "commands": [
+                "irsend set_transmitters {{=it.tv_l_port}}",
+                "irsend send_once sony power_off"
+              ]
+            },
+            "source": {
+              "name": "Reset Source",
+              "glyph": false,
+              "btn": false,
+              "commands": [
+                "irsend set_transmitters {{=it.tv_l_port}}",
+                "irsend send_once sony power_on",
+                "irsend send_once sony hdmi1"
+              ]
+            }
+          }
+        },
+        "tv_r": {
+          "name": "TV Right",
+          "scripts": {
+            "on": {
+              "name": "On",
+              "glyph": "off",
+              "btn": "success",
+              "commands": [
+                "irsend set_transmitters {{=it.tv_r_port}}",
+                "irsend send_once sony power_on"
+              ]
+            },
+            "off": {
+              "name": "Off",
+              "glyph": "off",
+              "btn": "danger",
+              "commands": [
+                "irsend set_transmitters {{=it.tv_r_port}}",
+                "irsend send_once sony power_off"
+              ]
+            },
+            "source": {
+              "name": "Reset Source",
+              "glyph": false,
+              "btn": false,
+              "commands": [
+                "irsend set_transmitters {{=it.tv_r_port}}",
+                "irsend send_once sony power_on",
+                "irsend send_once sony hdmi1"
+              ]
+            }
+          }
+        },
+        "proj_l": {
+          "name": "Projector Left",
+          "scripts": {
+            "on": {
+              "name": "On",
+              "glyph": "off",
+              "btn": "success",
+              "commands": [
+                "pjlink -p {{=it.proj_l_host}} power on"
+              ]
+            },
+            "off": {
+              "name": "Off",
+              "glyph": "off",
+              "btn": "danger",
+              "commands": [
+                "pjlink -p {{=it.proj_l_host}} power off"
+              ]
+            },
+            "lamps": {
+              "name": "Lamps",
+              "glyph": false,
+              "btn": false,
+              "commands": [
+                "pjlink -p {{=it.proj_l_host}} lamps"
+              ]
+            }
+          }
+        },
+        "proj_r": {
+          "name": "Projector Right",
+          "scripts": {
+            "on": {
+              "name": "On",
+              "glyph": "off",
+              "btn": "success",
+              "commands": [
+                "pjlink -p {{=it.proj_r_host}} power on"
+              ]
+            },
+            "off": {
+              "name": "Off",
+              "glyph": "off",
+              "btn": "danger",
+              "commands": [
+                "pjlink -p {{=it.proj_r_host}} power off"
+              ]
+            },
+            "lamps": {
+              "name": "Lamps",
+              "glyph": false,
+              "btn": false,
+              "commands": [
+                "pjlink -p {{=it.proj_r_host}} lamps"
+              ]
+            }
+          }
+        },
+        "auxtv_l": {
+          "name": "Aux TV Left",
+          "scripts": {
+            "on": {
+              "name": "On",
+              "glyph": "off",
+              "btn": "success",
+              "commands": [
+                "irsend set_transmitters {{=it.auxtv_l_port}}",
+                "irsend send_once vizio power_on"
+              ]
+            },
+            "off": {
+              "name": "Off",
+              "glyph": "off",
+              "btn": "danger",
+              "commands": [
+                "irsend set_transmitters {{=it.auxtv_l_port}}",
+                "irsend send_once vizio power_off"
+              ]
+            },
+            "source1": {
+              "name": "Main Source",
+              "glyph": false,
+              "btn": false,
+              "commands": [
+                "irsend set_transmitters {{=it.auxtv_l_port}}",
+                "irsend send_once vizio power_on",
+                "irsend send_once vizio hdmi1"
+              ]
+            },
+            "source2": {
+              "name": "Local Source",
+              "glyph": false,
+              "btn": false,
+              "commands": [
+                "irsend set_transmitters {{=it.auxtv_l_port}}",
+                "irsend send_once vizio power_on",
+                "irsend send_once vizio hdmi2"
+              ]
+            }
+          }
+        },
+        "auxtv_r": {
+          "name": "Aux TV Right",
+          "scripts": {
+            "on": {
+              "name": "On",
+              "glyph": "off",
+              "btn": "success",
+              "commands": [
+                "irsend set_transmitters {{=it.auxtv_r_port}}",
+                "irsend send_once vizio power_on"
+              ]
+            },
+            "off": {
+              "name": "Off",
+              "glyph": "off",
+              "btn": "danger",
+              "commands": [
+                "irsend set_transmitters {{=it.auxtv_r_port}}",
+                "irsend send_once vizio power_off"
+              ]
+            },
+            "source1": {
+              "name": "Main Source",
+              "glyph": false,
+              "btn": false,
+              "commands": [
+                "irsend set_transmitters {{=it.auxtv_r_port}}",
+                "irsend send_once vizio power_on",
+                "irsend send_once vizio hdmi1"
+              ]
+            },
+            "source2": {
+              "name": "Local Source",
+              "glyph": false,
+              "btn": false,
+              "commands": [
+                "irsend set_transmitters {{=it.auxtv_r_port}}",
+                "irsend send_once vizio power_on",
+                "irsend send_once vizio hdmi2"
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+}
