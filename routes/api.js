@@ -2,11 +2,19 @@
  * Serve JSON to our AngularJS client
  */
 
+/*jshint esversion:6*/
+/*global Promise:true*/
+
 var Promise = require('bluebird');
 var exec = require('child_process').exec;
 var debug = require('debug')('api');
 var fs = require('fs');
 var doT = require('dot');
+var Promise = require('bluebird');
+var request = require('request');
+var moment = require('moment');require('moment-duration-format');
+
+Promise.config({cancellation: true});
 
 var config;
 
@@ -21,7 +29,7 @@ var loadConfig = function loadConfig(){
 	rawconfig = null;
 	config1 = null;
 	require('debug')('config')('CONFIG', JSON.stringify(config, null, 2));
-}
+};
 loadConfig();
 
 exports.config = function(req, res){
@@ -33,7 +41,7 @@ exports.config = function(req, res){
   	start_page: config.start_page || "Main",
   	pages: pages
   });
-}
+};
 
 exports.page = function (req, res) {
 	var id = req.params.id;
@@ -74,7 +82,7 @@ exports.page = function (req, res) {
 var in_progress = {};
 
 var execPromise = function execPromise(cmd){
-	return new Promise(function(resolve, reject){
+	return new Promise(function(resolve, reject, onCancel){
 		debug('EXEC', cmd);
 		var child = exec(cmd);
 		var output = [];
@@ -87,10 +95,23 @@ var execPromise = function execPromise(cmd){
 		});
 		child.addListener('exit', function(code, signal){
 			debug('EXEC exit', code);
-			resolve(output.join(''));
+			setImmediate(()=>{
+				resolve(output.join(''));
+			});
+			child = null;
+		});
+		onCancel(()=>{
+			debug('Cancel exec');
+			if(child){
+				child.stdin.write('q');
+				// exec('killall omxplayer.bin');
+				// debug('Sending SIGINT to child');
+				// process.kill(child.pid, 'SIGINT');
+				// child.kill('SIGINT');
+			}
 		});
 	});
-}
+};
 var doScript = function doScript(cmdKey, commands){
 	debug('Running command set', cmdKey);
 	if( in_progress[cmdKey] ){
@@ -142,4 +163,129 @@ exports.runScript = function (req, res) {
 	var cmdKey = page_id + ':' + group_id + ':' + script_id;
 	var result = doScript(cmdKey, script.commands);
 	res.json({result:result});
-}
+};
+
+
+exports.streamList = function streamList(req, res){
+	var catName = req.params.name || 'VideoOnDemand';
+	var result = [];
+
+	var nameSort = (a,b)=>( ( a.name == b.name ) ? 0 : ( ( a.name > b.name ) ? 1 : -1 ) );
+
+	var opts = {
+		headers: {
+			'User-Agent': 'none'
+		},
+		uri: 'https://mediator.jw.org/v1/categories/E/' + catName,
+		qs: {detailed:1},
+		json: true
+	};
+	request.debug = true;
+	request.get(opts,(err, msg, obj)=>{
+		if( err ){
+			debug('err', err);
+			res.status(500).json({msg:'error'});
+			return;
+		}
+		// debug('obj', JSON.stringify(obj, null, 2));
+		obj.category.subcategories.forEach((category)=>{
+			var img = category.images && (category.images.wss || category.images.wsr) || {};
+			var row = {
+				name: category.name,
+				description: category.description,
+				image: img.xs,
+				key: category.key,
+				media: []
+			};
+			if(category.media) category.media.forEach((media)=>{
+				var img = media.images && (media.images.wss || media.images.wsr) || {};
+				var mrow = {
+					title: media.title,
+					duration: media.durationFormattedMinSec,
+					image: img.lg
+				};
+				var f = {bitRate:0};
+				media.files.forEach((file)=>{
+					if( file.bitRate > f.bitRate ) f = file;
+				});
+				mrow.link = f.progressiveDownloadURL;
+				row.media.push(mrow);
+			});
+			row.media.sort(nameSort);
+			result.push(row);
+		});
+		result.sort(nameSort);
+		res.json(result);
+	});
+
+
+};
+
+
+exports.upload = function upload(req, res){
+	debug('upload', req.file);
+	res.json({status:'ok'});
+};
+
+exports.play = function play(req, res){
+	var action = req.params.action || 'stop';
+	var url = req.body.url;
+	if( url == 'upload' ){
+		url = 'uploads/upload.mp4';
+	}
+
+	if( action === 'start' ){
+		if( !url || url === '' ){
+			return res.status(404).json({status:'not found'});
+		}
+		playVideo(url);
+	}else if( action === 'stop' ){
+		stopVideo();
+	}else{
+		return res.status('400').json({status:'bad argument'});
+	}
+
+	res.json({status:'ok'});
+};
+
+exports.playDetails = function playDetails(req, res){
+	var action = req.params.action || 'stop';
+	var url = req.body.url;
+	if( !url || url === '' ){
+		return res.status(404).json({status:'not found'});
+	}
+	var cmd;
+	if( url == 'upload' ){
+		cmd = 'exiftool -j uploads/upload.mp4';
+	}else{
+		cmd = 'curl -skr 0-800000 '+ url +' | exiftool -j - ';
+	}
+	// execPromise('ls -alh uploads/upload.mp4').then(debug);
+	execPromise(cmd).then((output)=>{
+		var tags = {};
+		try{
+			var o = JSON.parse(output);
+			tags = o[0];
+			// tags.durationStr = tags.MediaDuration;
+		}catch(e){}
+		res.json(tags);
+	}).catch((err)=>{
+		res.status(500).json({err:err});
+	});
+
+};
+
+var currentVideo = null;
+var playVideo = function playVideo(url){
+	if( currentVideo ){
+		stopVideo();
+	}
+	currentVideo = execPromise('omxplayer ' + url).then(function(output){
+		debug('play output', output);
+	});
+};
+var stopVideo = function stopVideo(){
+	if( !currentVideo ) return;
+	currentVideo.cancel();
+	currentVideo = null;
+};

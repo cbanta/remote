@@ -1,0 +1,11 @@
+hr
+ul.nav.nav-pills.nav-stacked
+  li(
+    role="presentation",
+    ng-repeat="(pageid, page) in pages",
+    class="{{(active_page == pageid) ? 'active' : ''}}")
+      a(href="#/page/{{pageid}}") {{page}}
+hr
+ul.nav.nav-pills.nav-stacked
+  li
+    a(href="#/upload") Play Video

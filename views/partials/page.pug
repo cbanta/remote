@@ -5,10 +5,8 @@
         .panel-body
           .row
             .form-group(ng-repeat="(scriptid, script) in group.scripts",class="col-xs-{{script.name.length > 4 ? 8 : 6}}")
-              button.btn.btn-lg(class="btn-{{script.btn || 'default'}}",ng-click="runScript(groupid,scriptid)")
+              button.btn.btn-lg(class="btn-{{script.btn || 'default'}}",ng-click="runScript(groupid,scriptid)",ng-disabled="script.isDisabled")
                 span.glyphicon(class="glyphicon-{{script.glyph}}",ng-if="script.glyph")
                 |  {{script.name}}
-hr
-ul.nav.nav-pills.nav-stacked
-  li(role="presentation",ng-repeat="(pageid, page) in pages",class="{{(active_page == pageid) ? 'active' : ''}}")
-    a(href="/#/page/{{pageid}}") {{page}}
+
+include bottom_nav.pug

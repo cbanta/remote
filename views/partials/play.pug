@@ -1,0 +1,24 @@
+ul.nav.nav-tabs
+  li(role="presentation",class="{{(active_page == 'upload') ? 'active' : ''}}")
+    a(href="#/upload") Play Video
+  li(role="presentation",class="{{(active_page == 'stream') ? 'active' : ''}}")
+    a(href="#/stream") Stream Video
+  li.active(role="presentation",class="{{(active_page == 'stream') ? 'active' : ''}}")
+    a(href="#/play") Video Player
+
+h4 {{meta.Title}}
+p {{meta.Album}}
+p {{meta.Duration}}
+
+.btn-group.btn-group-lg
+  .btn.btn-default(ng-click="stop()")
+    span.glyphicon.glyphicon-stop
+    span  stop
+  .btn.btn-default(ng-click="play()")
+    span.glyphicon.glyphicon-play
+    span  play
+
+hr
+ul.nav.nav-pills.nav-stacked
+  li
+    a(href="#/page/{{start_page}}") Back

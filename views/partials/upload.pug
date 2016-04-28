@@ -1,0 +1,27 @@
+ul.nav.nav-tabs
+  li(role="presentation",class="{{(active_page == 'upload') ? 'active' : ''}}")
+    a(href="#/upload") Play Video
+  li(role="presentation",class="{{(active_page == 'stream') ? 'active' : ''}}")
+    a(href="#/stream") Stream Video
+
+.button.drop-box(
+  ngf-select="upload($file)",
+  ngf-drop="upload($file)",
+  ngf-multiple="false",
+  nfg-pattern="video/mp4",
+  ngf-drag-over-class="'dragover'"
+  ) Click, tap, or drag and drop here to select video
+.progress(ng-if="progress > 0")
+  .progress-bar(
+    role="progressbar",
+    aria-valuenow="{{progress}}",
+    aria-valuemin="0",
+    aria-valuemax="100",
+    ng-style="{width : ( progress + '%' ) }"
+  )
+
+
+hr
+ul.nav.nav-pills.nav-stacked
+  li
+    a(href="#/page/{{start_page}}") Back

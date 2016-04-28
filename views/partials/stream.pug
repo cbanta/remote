@@ -1,0 +1,27 @@
+ul.nav.nav-tabs
+  li(role="presentation",class="{{(active_page == 'upload') ? 'active' : ''}}")
+    a(href="#/upload") Play Video
+  li(role="presentation",class="{{(active_page == 'stream') ? 'active' : ''}}")
+    a(href="#/stream") Stream Video
+
+
+ul.nav.nav-pills.nav-stacked
+  li
+    a(href="#/stream") Categories
+
+.list-group
+  div(ng-repeat="cat in cats")
+    a.list-group-item(ng-if="cat.media.length == 0",href="#/stream/{{cat.key}}")
+      h4.list-group-item-heading {{cat.name}}
+      p.list-group-item-text {{cat.description}}
+    div(ng-if="cat.media.length > 0").list-group-item
+      h4.list-group-heading {{cat.name}}
+      .list-group
+        a.list-group-item(ng-repeat="media in cat.media",ng-click="playLink(media.link)",href="")
+          h5.list-group-item-heading {{media.title}}
+          p.list-group-item-text {{media.duration}}
+
+hr
+ul.nav.nav-pills.nav-stacked
+  li
+    a(href="#/page/{{start_page}}") Back
