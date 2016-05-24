@@ -180,7 +180,7 @@ exports.streamList = function streamList(req, res){
 		qs: {detailed:1},
 		json: true
 	};
-	request.debug = true;
+	//request.debug = true;
 	request.get(opts,(err, msg, obj)=>{
 		if( err ){
 			debug('err', err);

@@ -1,11 +1,14 @@
 {
   "variables": {
-    "proj_l_host": "192.168.1.1:4352",
-    "proj_r_host": "192.168.1.2:4352",
+    "proj_l_host": "192.168.1.10:4352",
+    "proj_r_host": "192.168.1.11:4352",
     "tv_l_port": 1,
     "tv_r_port": 2,
     "auxtv_l_port": 3,
-    "auxtv_r_port": 4
+    "auxtv_r_port": 4,
+    "sony_program_source": "hdmi2",
+    "vizio_program_source": "hdmi3",
+    "vizio_local_source": "hdmi2"
   },
   "start_page": "main",
   "pages": {
@@ -23,7 +26,7 @@
                 "irsend set_transmitters 1 2 3 4",
                 "irsend send_once sony power_on",
                 "irsend send_once vizio power_on",
-                "irsend send_once vizio hdmi1"
+                "irsend send_once vizio {{=it.vizio_program_source}}"
               ]
             },
             "off": {
@@ -48,11 +51,10 @@
               "commands": [
                 "&pjlink -p {{=it.proj_l_host}} power on",
                 "&pjlink -p {{=it.proj_r_host}} power on",
-                "irsend set_transmitters {{=it.tv_l_port}} {{=it.tv_r_port}}",
+                "irsend set_transmitters 1 2 3 4",
                 "irsend send_once sony power_off",
-                "irsend set_transmitters {{=it.auxtv_l_port}} {{=it.auxtv_r_port}}",
                 "irsend send_once vizio power_on",
-                "irsend send_once vizio hdmi1"
+                "irsend send_once vizio {{=it.vizio_program_source}}"
               ]
             },
             "off": {
@@ -102,7 +104,7 @@
               "commands": [
                 "irsend set_transmitters {{=it.tv_l_port}}",
                 "irsend send_once sony power_on",
-                "irsend send_once sony hdmi1"
+                "irsend send_once sony {{=it.sony_program_source}}"
               ]
             }
           }
@@ -135,7 +137,7 @@
               "commands": [
                 "irsend set_transmitters {{=it.tv_r_port}}",
                 "irsend send_once sony power_on",
-                "irsend send_once sony hdmi1"
+                "irsend send_once sony {{=it.sony_program_source}}"
               ]
             }
           }
@@ -226,7 +228,7 @@
               "commands": [
                 "irsend set_transmitters {{=it.auxtv_l_port}}",
                 "irsend send_once vizio power_on",
-                "irsend send_once vizio hdmi1"
+                "irsend send_once vizio {{=it.vizio_program_source}}"
               ]
             },
             "source2": {
@@ -236,7 +238,7 @@
               "commands": [
                 "irsend set_transmitters {{=it.auxtv_l_port}}",
                 "irsend send_once vizio power_on",
-                "irsend send_once vizio hdmi2"
+                "irsend send_once vizio {{=it.vizio_local_source}}"
               ]
             }
           }
@@ -269,7 +271,7 @@
               "commands": [
                 "irsend set_transmitters {{=it.auxtv_r_port}}",
                 "irsend send_once vizio power_on",
-                "irsend send_once vizio hdmi1"
+                "irsend send_once vizio {{=it.vizio_program_source}}"
               ]
             },
             "source2": {
@@ -279,7 +281,7 @@
               "commands": [
                 "irsend set_transmitters {{=it.auxtv_r_port}}",
                 "irsend send_once vizio power_on",
-                "irsend send_once vizio hdmi2"
+                "irsend send_once vizio {{=it.vizio_local_source}}"
               ]
             }
           }

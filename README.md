@@ -3,18 +3,26 @@
 This is a web server using nodejs that uses lirc and pjlink to turn on and off
 tvs and projectors
 
-Requires:
-pjlink  "pip install pjlink"
-exiftool "apt-get install exiftool"
-nginx
-node "apt-get install node; npm install n -g; n latest"
-lirc "apt-get install lirc"
+## setup pjlink
 
-install to '/opt/tvremote'
-run "npm install" in root directory (/opt/tvremote)
-start server with pm2 - "npm install pm2 -g; pm2 start app.js"
-set pm2 to run on startup - "pm2 startup; pm2 save"
+pip install pjlink
 
-configure nginx - "cp nginx.sample /etc/nginx/sites-available/default"
-configure lirc
-configure app - "cp config.sample.json config.json; vim config.json"
+test with pjlink
+
+## setup lirc for iguanair usb emitter
+
+First install iguanair using this:
+http://www.iguanaworks.net/wiki/doku.php?id=usbir:gettingstarted
+
+Then use this to install lirc
+
+cd /usr/src
+sudo apt-get remove lirc liblircclient0
+sudo apt-get build-dep lirc
+sudo apt-get -b source lirc
+sudo dpkg -i liblircclient*.deb lirc*.deb
+echo "lirc hold" | dpkg --set-selections
+echo "lirc hold" | sudo dpkg --set-selections
+echo "lirc-x hold" | sudo dpkg --set-selections
+echo "liblircclient0 hold" | sudo dpkg --set-selections
+echo "liblircclient-dev hold" | sudo dpkg --set-selections
