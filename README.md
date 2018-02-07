@@ -16,6 +16,7 @@ http://www.iguanaworks.net/wiki/doku.php?id=usbir:gettingstarted
 
 Then use this to install lirc
 
+```
 cd /usr/src
 sudo apt-get remove lirc liblircclient0
 sudo apt-get build-dep lirc
@@ -26,3 +27,4 @@ echo "lirc hold" | sudo dpkg --set-selections
 echo "lirc-x hold" | sudo dpkg --set-selections
 echo "liblircclient0 hold" | sudo dpkg --set-selections
 echo "liblircclient-dev hold" | sudo dpkg --set-selections
+```
